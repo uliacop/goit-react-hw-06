@@ -3,31 +3,36 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { nanoid } from "nanoid";
 import { useId } from "react";
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/contactsSlice";
+
 const phoneRegExp = /^\d{3}-\d{2}-\d{2}$/;
 const userSchema = Yup.object().shape({
   name: Yup.string()
-    .min(3, "Too Short!It`s needs 3 symbols")
-    .max(50, "Too Long!It`s needs max 50 symbols")
+    .min(3, "Too Short! It needs 3 symbols")
+    .max(50, "Too Long! It needs max 50 symbols")
     .required("Required"),
 
   number: Yup.string()
     .matches(
       phoneRegExp,
-      "Phone number is not valid.Enter number in format XXX-XX-XX"
+      "Phone number is not valid. Enter number in format XXX-XX-XX"
     )
     .required("Phone number is required"),
 });
 
-export default function ContactForm({ onAdd }) {
+export default function ContactForm() {
+  const dispatch = useDispatch();
   const nameFieldId = useId();
   const phoneFieldId = useId();
   const handleSubmit = (values, actions) => {
-    onAdd({
-      id: nanoid(),
-      name: values.name,
-      number: values.number,
-    });
-
+    dispatch(
+      addContact({
+        id: nanoid(),
+        name: values.name,
+        number: values.number,
+      })
+    );
     actions.resetForm();
   };
 
